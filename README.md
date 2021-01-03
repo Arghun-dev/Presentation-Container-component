@@ -99,7 +99,11 @@ const milesLimit = 3
 In the example, `MilesRun` fits the description of a presentational component. It displays data using the <input> tag, but then it also provides a class which we can use should we want to style our input and an onChange callback as well as a limit for the amount of numbers users can enter into the field. By providing all this definition in one place, the application is made easier to work with and debug. Let’s have a recap on all we have covered so far:
 
 `. Presentational components are primarily concerned with how things look.`
+
 `. Most times they contain no more than a render method.`
+
 `. Presentational components do not know how to load or alter the data that they render.`
+
 `. Presentational components rarely have any internally changeable state properties.`
+
 `. Presentational components best written as stateless functional components.`
