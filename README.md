@@ -107,3 +107,168 @@ In the example, `MilesRun` fits the description of a presentational component. I
 `. Presentational components rarely have any internally changeable state properties.`
 
 `. Presentational components best written as stateless functional components.`
+
+
+**What's a Container Component Pattern?**
+
+If presentational components are concerned with how things look, container components are more concerned with how things work. Container components are components that specify the data a presentational component should render. Instances of container components can be generated using higher order components such as connect() from Redux or createContainer() from Relay. One very important feature of components is their ability to be reused across different parts of an application. Check out the code block below:
+
+```js
+class CarList extends React.Component {
+    this.state = { cars: [] };
+
+    componentDidMount() {
+      getCars(cars =>
+        this.setState({ cars: cars }));
+    }
+    
+    render() {
+      return (
+        <ul>
+          {this.state.cars.map(e => (
+            <li>{e.make}: {e.model}</li>
+          ))}
+        </ul>
+      );
+    }
+  }
+```
+
+In the example above, we’ve made the `CarList` component responsible for fetchig and displaying of data but there’s a catch, `CarList` cannot be used unless under the same conditions. Let’s implement the container component pattern and solve that problem:
+
+```js
+class CarListContainer extends React.Component {
+    state = { cars: [] };
+    componentDidMount() {
+      getCars(cars =>
+        this.setState({ cars: cars }));
+    }
+    render() {
+      return <CarsList cars={this.state.cars} />;
+    }
+}
+```
+
+We then recreate CarsList to take cars as a prop:
+
+```js
+const CarsList = props =>
+    <ul>
+      {props.cars.map(e => (
+        <li>{e.make}: {e.model}</li>
+      ))}
+    </ul>
+```
+
+By setting apart our data fetching and rendering operations, we have made our CarsList component super reusable. Not only that, we get go understand our application’s user interface better and make our components easier to understand.
+
+A basic recap on we have covered in this section:
+
+`. Container components have to do with with how things work.`
+
+`. They may contain presentational components. Presentational components don’t contain container components.`
+
+`Provides data and behavior to presentational components and other container components.`
+
+`Because they are mostly data sources, they are often stateful.`
+
+
+**Implementing Presentational and Container Component Pattern**
+
+Now that we have seen how presentational and container components work, let’s show how we can make our components and applications in general look more presentable using both patterns. Below is a component which is yet to be split into container and presentational:
+
+```js
+class Clock extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        time: this.props.time
+      };
+      this.update = this.updateTime.bind(this);
+    }
+    render() {
+      var time = this.formatTime(this.state.time);
+      return (<h1>{ time.hours } : { time.minutes } : { time.seconds }</h1>);
+    }
+    componentDidMount() {
+      this.interval = setInterval(this.update, 1000);
+    }
+    componentWillUnmount() {
+      clearInterval(this.interval);
+    }
+    formatTime(time) {
+      var [hours, minutes, seconds] = [
+        time.getHours(),
+        time.getMinutes(),
+        time.getSeconds()
+      ].map(num => num < 10 ? '0' + num : num);
+      return {
+        hours,
+        minutes,
+        seconds
+      };
+    }
+    updateTime() {
+      this.setState({
+        time: new Date(this.state.time.getTime() + 1000)
+      });
+    }
+  };
+  ReactDOM.render(<Clock time={ new Date() }/>, ...);
+```
+
+In the constructor of the Clock component above, the passed time object is stored to the internal state. setInterval updates the state every second and re-renders the component. However our Clock component may have a couple of problems, changing the time inside the component implies that only Clock knows the time value. Should there be another component that requires this data, it will be very hard to access it. Let’s try to rebuild the Clock component into a presentational and a container component. We first create a container component, ClockContainer:
+
+```js
+// Clock/index.js
+  import Clock from './Clock.jsx'; // our presentational component
+
+  export default class ClockContainer extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        time: props.time
+      };
+      this.update = this.updateTime.bind(this);
+    }
+    render() {
+      return <Clock { ...this.extract(this.state.time) }/>;
+    }
+    componentDidMount() {
+      this.interval = setInterval(this.update, 1000);
+    }
+    componentWillUnmount() {
+      clearInterval(this.interval);
+    }
+    extract(time) {
+      return {
+        hours: time.getHours(),
+        minutes: time.getMinutes(),
+        seconds: time.getSeconds()
+      };
+    }
+    updateTime() {
+      this.setState({
+        time: new Date(this.state.time.getTime() + 1000)
+      });
+    }
+  };
+```
+
+Our `ClockContainer` component above accepts `time`, performs the setInterval loop and knows details about the data (getHours, getMinutes and getSeconds).
+
+Our presentational component will consist of just the visual representation of our clock:
+
+```js
+// Clock/Clock.jsx
+  export default function Clock(props) {
+    var [hours, minutes, seconds] = [
+      props.hours,
+      props.minutes,
+      props.seconds
+    ].map(num => num < 10 ? '0' + num : num);
+    return <h1>{ hours } : { minutes } : { seconds }</h1>;
+  };
+```
+
+By dividing our initial Clock component in this fashion, we are able to reuse it easily in different instances. This way Clock.jsx can be present in applications that have nothing to do with keeping time or date.
