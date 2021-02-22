@@ -1,7 +1,7 @@
 # Presentation-Container-component
 
 **Problem**
-`Data and Logic together`
+`Data and Logic together` => **separation concerns**
 
 ```js
 class Clock extends React.Component {
