@@ -5,6 +5,39 @@
 
 `Concern`: `something your code is responsible for`
 
+**Example:** Imagin we have weather widget component, we have 2 sections: `fetching Data` and `Displaying Data` these are 2 concerns
+
+1. Fetching Data => `Logic`
+2. Displaying Data => `UI`
+
+**Container Component** => is for `Logic` => `WeatherWidgetContainer.js`
+**Presentation Component** => is for `user interface` => `WeatherWidger.js`
+
+What is actually happening is that `WeatherWidgerContainer.js` component is rendering the `WeatherWidget.js` component, it will render it, and will pass in any data, that the `WeatherWidget.js` needs to know about.
+
+```js
+// the container component is responsible for state, and fetching data
+import React from 'react';
+import WeatherWidget from './WeatherWidget';
+
+class WeatherWidgetContainer extends React.Component {
+  state = { weather: null }
+  
+  componentDidMount() {
+    getWeather().then(weather => {
+      this.setState({ weather })
+    })
+  }
+  
+  render() {
+    return (
+      // the presentation component is just responsible for visually displaying the widget
+      <WeatherWidget weather={this.state.weather} />
+    )
+  }
+}
+```
+
 ```js
 class Clock extends React.Component {
   constructor(props) {
