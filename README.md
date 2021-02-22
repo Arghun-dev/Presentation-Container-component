@@ -15,6 +15,7 @@
 
 What is actually happening is that `WeatherWidgerContainer.js` component is rendering the `WeatherWidget.js` component, it will render it, and will pass in any data, that the `WeatherWidget.js` needs to know about.
 
+**WeatherWidgetContainer.js**
 ```js
 // the container component is responsible for state, and fetching data
 import React from 'react';
@@ -37,6 +38,25 @@ class WeatherWidgetContainer extends React.Component {
   }
 }
 ```
+
+**WeatherWidget.js** => this component is just for displaying data
+```js
+const WeatherWidget = (props) => {
+  const { weather } = props;
+  
+  return (
+    <div>
+      <h1>{weather.city} - {weather.country}</h1>
+      <ul>
+        <li>{weather.temp}</li>
+        <li>{weather.description}</li>
+      </ul>
+    </div>
+  )
+}
+```
+
+**Clock example**
 
 ```js
 class Clock extends React.Component {
