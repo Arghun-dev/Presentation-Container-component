@@ -3,6 +3,8 @@
 **Problem**
 `Data and Logic together` => **separation concerns**
 
+`Concern`: `something your code is responsible for`
+
 ```js
 class Clock extends React.Component {
   constructor(props) {
