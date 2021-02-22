@@ -56,6 +56,20 @@ const WeatherWidget = (props) => {
 }
 ```
 
+So, why is this useful?
+
+1. Readable
+2. Easier to hunt down bugs
+3. Re-usable
+4. Testable
+
+
+**Now there is another question which mastters is that, when do I use it?**
+
+if you're thinking that your component is going to do `to many things`, `Mixture of behaviour/presentation` and `bloated component` that's probably is a good sign you should split your component into two `presentation` and `container` components and this approach, `separation of concerns` is a good way to start, if you look at it, you'll say, ohh this is something which is responsible for something what's look like and what is going to do. you probably should split it into two separate components.
+
+So, this `Presentational Container Pattern` is incredibaly powerful. it's something that you can use in both small Apps and massive Apps. So it's a very scalable pattern. And it will immediately make you code base more managebale. 
+
 **Clock example**
 
 ```js
